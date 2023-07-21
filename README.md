@@ -1,4 +1,4 @@
-# PlayerVisibility<img src="/assets/logo.png" width="19px"/>
+# PlayerVisibility <img src="/assets/logo.png" width="60px"/>
 
 >**PlayerVisibility** is a fabric mod for **Minecraft** that allows you **hide other players** at the **press** of a **key**, while also having a **whitelist** for some people to still show up.
 >
