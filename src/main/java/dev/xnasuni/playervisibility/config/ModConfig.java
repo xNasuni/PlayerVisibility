@@ -14,13 +14,13 @@ public class ModConfig implements ConfigData {
     public static ModConfig INSTANCE;
 
     public static void init() {
+        PlayerWhitelist = PlayerVisibility.GetWhitelistedPlayers();
         AutoConfig.register(ModConfig.class, me.shedaniel.autoconfig.serializer.JanksonConfigSerializer::new);
         INSTANCE = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
-        INSTANCE.PlayerWhitelist = PlayerVisibility.GetWhitelistedPlayers();
     }
 
     @ConfigEntry.Gui.PrefixText
-    public String[] PlayerWhitelist = new String[]{};
+    public static String[] PlayerWhitelist;
 
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.DROPDOWN)

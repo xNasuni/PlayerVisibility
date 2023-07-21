@@ -1,11 +1,14 @@
 package dev.xnasuni.playervisibility;
 
+import com.mojang.brigadier.CommandDispatcher;
 import dev.xnasuni.playervisibility.commands.VisibilityCommand;
 import dev.xnasuni.playervisibility.config.ModConfig;
 import dev.xnasuni.playervisibility.util.ArrayListUtil;
 import dev.xnasuni.playervisibility.util.ConfigUtil;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -13,6 +16,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
@@ -40,8 +44,6 @@ public class PlayerVisibility implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        RegisterCommands();
-
         ConfigDirectory = FabricLoader.getInstance().getConfigDir().resolve("player-visibility");
         try {
             Files.createDirectories(ConfigDirectory);
@@ -86,11 +88,13 @@ public class PlayerVisibility implements ModInitializer {
             }
         });
 
+        ClientCommandRegistrationCallback.EVENT.register(PlayerVisibility::RegisterCommands);
+
         LOGGER.info("Player Visibility Initialized");
     }
 
-    private static void RegisterCommands() {
-        VisibilityCommand.Register(ClientCommandManager.DISPATCHER);
+    private static void RegisterCommands(CommandDispatcher<FabricClientCommandSource> Dispatcher, CommandRegistryAccess Registry) {
+        VisibilityCommand.Register(Dispatcher);
     }
 
     public static void ToggleVisibility() {
@@ -113,7 +117,7 @@ public class PlayerVisibility implements ModInitializer {
     public static void WhitelistPlayer(String Username) {
         String CasedName = ArrayListUtil.GetCase(WhitelistedPlayers, Username);
 
-        if (Username.equalsIgnoreCase(Minecraft.player.getName().asString())) {
+        if (Username.equalsIgnoreCase(Minecraft.player.getName().getString())) {
             Minecraft.player.sendMessage(Text.of("§cYou can't whitelist yourself!"), true);
             return;
         }
@@ -124,14 +128,14 @@ public class PlayerVisibility implements ModInitializer {
         }
 
         WhitelistedPlayers = ArrayListUtil.AddStringToArray(WhitelistedPlayers, Username);
-        ModConfig.INSTANCE.PlayerWhitelist = PlayerVisibility.GetWhitelistedPlayers();
+        ModConfig.PlayerWhitelist = PlayerVisibility.GetWhitelistedPlayers();
         Minecraft.player.sendMessage(Text.of(String.format("§aAdded §f'%s'§a to the whitelist.", CasedName)), true);
     }
 
     public static void UnwhitelistPlayer(String Username) {
         String CasedName = ArrayListUtil.GetCase(WhitelistedPlayers, Username);
 
-        if (Username.equalsIgnoreCase(Minecraft.player.getName().asString())) {
+        if (Username.equalsIgnoreCase(Minecraft.player.getName().getString())) {
             Minecraft.player.sendMessage(Text.of("§cYou can't unwhitelist yourself!"), true);
             return;
         }
@@ -142,7 +146,7 @@ public class PlayerVisibility implements ModInitializer {
         }
 
         WhitelistedPlayers = ArrayListUtil.RemoveStringToArray(WhitelistedPlayers, CasedName);
-        ModConfig.INSTANCE.PlayerWhitelist = PlayerVisibility.GetWhitelistedPlayers();
+        ModConfig.PlayerWhitelist = PlayerVisibility.GetWhitelistedPlayers();
         Minecraft.player.sendMessage(Text.of(String.format("§aRemoved §f'%s'§a from the whitelist.", CasedName)), true);
     }
 
@@ -155,7 +159,7 @@ public class PlayerVisibility implements ModInitializer {
         }
 
         WhitelistedPlayers = new String[]{};
-        ModConfig.INSTANCE.PlayerWhitelist = PlayerVisibility.GetWhitelistedPlayers();
+        ModConfig.PlayerWhitelist = PlayerVisibility.GetWhitelistedPlayers();
         Minecraft.player.sendMessage(Text.of(String.format("§aCleared the whitelist §f(§a%s§f)", SizeBeforeClear)), true);
 
     }

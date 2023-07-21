@@ -18,11 +18,11 @@ public class PlayerMixin {
     private void InjectRender(AbstractClientPlayerEntity abstractClientPlayerEntity, float f, float g, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
         boolean ShouldShowPlayer = PlayerVisibility.IsVisible();
 
-        if (abstractClientPlayerEntity.getName().asString().equalsIgnoreCase(PlayerVisibility.Minecraft.player.getName().asString())) {
+        if (abstractClientPlayerEntity.getName().getString().equalsIgnoreCase(PlayerVisibility.Minecraft.player.getName().getString())) {
             ShouldShowPlayer = true;
         }
 
-        if (ArrayListUtil.ContainsLowercase(PlayerVisibility.GetWhitelistedPlayers(), abstractClientPlayerEntity.getName().asString())) {
+        if (ArrayListUtil.ContainsLowercase(PlayerVisibility.GetWhitelistedPlayers(), abstractClientPlayerEntity.getName().getString())) {
             ShouldShowPlayer = true;
         }
 

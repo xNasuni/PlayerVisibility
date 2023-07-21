@@ -5,6 +5,5 @@
 
   "text.autoconfig.player-visibility.option.PlayerWhitelist.@PrefixText": "If you wish to change the whitelist, use the command /visibility whitelist instead of changing below.",
   "text.autoconfig.player-visibility.option.PlayerWhitelist": "Player Visibility Whitelist",
-  "text.autoconfig.player-visibility.option.MainColor.@ToolTip": "The Main Color of the Text",
   "text.autoconfig.player-visibility.option.MainColor": "Main Text Color"
 }
