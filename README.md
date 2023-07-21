@@ -6,7 +6,7 @@
 
 >
 # Download
-> **[`Latest Version` `65f21469bd0d2e98de073da0fbdd2c7decd8b7f986ca6196e8651410bb4cde6a`](github.com/xNasuni/PlayerVisibility/releases/latest)**
+> **[`Latest Version` `65f21469bd0d2e98de073da0fbdd2c7decd8b7f986ca6196e8651410bb4cde6a`](https://github.com/xNasuni/PlayerVisibility/releases/latest)**
 >
 > **[`Curse Forge`](https://www.curseforge.com/minecraft/mc-mods/player-visibility)**
 > **[`Modrinth`](https://modrinth.com/mod/player-visibility)**
