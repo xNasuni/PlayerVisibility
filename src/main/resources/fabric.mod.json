@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "player-visibility",
+  "version": "${version}",
+  "name": "Player Visibility",
+  "description": "",
+  "authors": [
+    "xNasuni"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": "https://github.com/xNasuni/PlayerVisibility",
+    "issues": "https://github.com/xNasuni/PlayerVisibility/issues"
+  },
+
+  "license": "BSD 3 Clause",
+  "icon": "assets/player-visibility/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      "dev.xnasuni.playervisibility.PlayerVisibility"
+    ],
+    "modmenu": [
+      "dev.xnasuni.playervisibility.config.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "player-visibility.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.19",
+    "fabric": "*",
+    "minecraft": "1.18.X",
+    "java": ">=17"
+  },
+  "suggests": {
+    "another-mod": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "update_checker": true
+    }
+  }
+}

@@ -1,4 +1,5 @@
 .gradle
+.idea
 **/build/
 !src/**/build/
 
@@ -19,3 +20,7 @@ gradle-app.setting
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+
+# Fabric Folders & Other
+run
+libs

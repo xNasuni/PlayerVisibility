@@ -1,0 +1,10 @@
+{
+  "key.player-visibility.toggle": "Toggle Player Visibility",
+  "category.player-visibility.main": "Player Visibility",
+  "text.autoconfig.player-visibility.title": "Player Visibility Configuration",
+
+  "text.autoconfig.player-visibility.option.PlayerWhitelist.@PrefixText": "If you wish to change the whitelist, use the command /visibility whitelist instead of changing below.",
+  "text.autoconfig.player-visibility.option.PlayerWhitelist": "Player Visibility Whitelist",
+  "text.autoconfig.player-visibility.option.MainColor.@ToolTip": "The Main Color of the Text",
+  "text.autoconfig.player-visibility.option.MainColor": "Main Text Color"
+}
