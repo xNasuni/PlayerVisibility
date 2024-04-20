@@ -3,6 +3,8 @@
 >**PlayerVisibility** is a fabric mod for **Minecraft** that allows you **hide other players** at the **press** of a **key**, while also having a **whitelist** for some people to still show up.
 >
 >To learn more or how to use this mod visit [the wiki](https://github.com/xNasuni/PlayerVisibility/wiki).
+>
+> Player Visibility is incompatible with [SkinShuffle](https://modrinth.com/mod/skinshuffle), others are fine like Essential.
 
 >
 # Download
