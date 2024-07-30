@@ -4,11 +4,11 @@
 >
 >To learn more or how to use this mod visit [the wiki](https://github.com/xNasuni/PlayerVisibility/wiki).
 >
-> Player Visibility is incompatible with [SkinShuffle](https://modrinth.com/mod/skinshuffle), others are fine like Essential.
+> Player Visibility is incompatible with [SkinShuffle](https://modrinth.com/mod/skinshuffle), if you find any more please make an issue so I can add them to this 'list'.
 
 >
 # Download
-> **[`Latest Version` `65f21469bd0d2e98de073da0fbdd2c7decd8b7f986ca6196e8651410bb4cde6a`](https://github.com/xNasuni/PlayerVisibility/releases/latest)**
+> **[`Latest Version` `527fddb3530399b6515bbdc90dcb58c78868d51ed51e1a170e1b3f853109c87e`](https://github.com/xNasuni/PlayerVisibility/releases/latest)**
 >
 > **[`Curse Forge`](https://www.curseforge.com/minecraft/mc-mods/player-visibility)**
 > **[`Modrinth`](https://modrinth.com/mod/player-visibility)**
