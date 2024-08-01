@@ -1,11 +1,14 @@
 {
   "schemaVersion": 1,
   "id": "player-visibility",
-  "version": "${version}",
+  "version": "1.1",
   "name": "Player Visibility",
-  "description": "",
+  "description": "Hide other players at the press of a key!",
   "authors": [
     "xNasuni"
+  ],
+  "contributors": [
+	  "yichifauzi"
   ],
   "contact": {
     "homepage": "",
