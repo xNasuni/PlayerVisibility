@@ -1,0 +1,10 @@
+{
+  "key.player-visibility.toggle": "Перемкнути видимість гравця",
+  "category.player-visibility.main": "Видимість гравця",
+  "text.autoconfig.player-visibility.title": "Конфігурація видимості гравця",
+
+  "text.autoconfig.player-visibility.option.PlayerWhitelist.@PrefixText": "Якщо ви хочете змінити білий список, скористайтеся командою /видимість білого списку, а не зміною нижче.",
+  "text.autoconfig.player-visibility.option.PlayerWhitelist": "Білий список видимості гравців",
+  "text.autoconfig.player-visibility.option.MainColor": "Основний колір тексту",
+  "text.autoconfig.player-visibility.option.MainColor.@Tooltip": "Колір панелі дій повідомляє про те, що показує мод."
+}
