@@ -5,6 +5,7 @@ import static dev.xnasuni.playervisibility.PlayerVisibilityClient.LOGGER;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
+import java.lang.reflect.Constructor;
 
 public class Text {
     private static final MethodHandles.Lookup lookup = MethodHandles.lookup();
@@ -19,9 +20,9 @@ public class Text {
         } catch (Throwable e) {
             try {
                 Class<?> translatableTextClass = Class.forName("net.minecraft.class_2588");
-                MethodType methodType = MethodType.methodType(void.class, String.class, Object[].class);
-                MethodHandle constructor = lookup.findConstructor(translatableTextClass, methodType);
-                return constructor.invoke(key, args);
+                Constructor<?> translatableTextCtor = translatableTextClass.getConstructor(String.class, Object[].class);
+
+                return translatableTextCtor.newInstance(key, args);
             } catch (Throwable e2) {
                 LOGGER.error("Couldn't create translatable text for {}", key, e2);
             }
@@ -38,9 +39,17 @@ public class Text {
         } catch (Throwable e) {
             try {
                 Class<?> translatableTextClass = Class.forName("net.minecraft.class_2588");
-                MethodType methodType = MethodType.methodType(void.class, String.class);
-                MethodHandle constructor = lookup.findConstructor(translatableTextClass, methodType);
-                return constructor.invoke(key);
+
+                try {
+                    MethodType ctorType = MethodType.methodType(void.class, String.class);
+                    MethodHandle ctorMethod = lookup.findConstructor(translatableTextClass, ctorType);
+                    return ctorMethod.invoke(key);
+                } catch (Throwable ignored) {
+                }
+
+                MethodType ctorType = MethodType.methodType(void.class, String.class, Object[].class);
+                MethodHandle ctorMethod = lookup.findConstructor(translatableTextClass, ctorType);
+                return ctorMethod.invoke(key, new Object[0]);
             } catch (Throwable e2) {
                 LOGGER.error("Couldn't create translatable text for {}", key, e2);
             }
@@ -62,14 +71,15 @@ public class Text {
                 MethodHandle ofMethod = lookup.findStatic(textClass, "method_30163", methodType);
                 return ofMethod.invoke(text);
             } catch (Throwable e2) {
-//                try {
-//                    Class<?> textClass = Class.forName("net.minecraft.class_2585");
-//                    MethodType methodType = MethodType.methodType(void.class, new Class[]{String.class});
-//                    MethodHandle constructor = lookup.findConstructor(textClass, methodType);
-//                    return constructor.invoke(text);
-//                } catch (Throwable e3) {
-                LOGGER.error("Couldn't create literal text for {}", text, e2);
-//                }
+                try {
+                    Class<?> literalTextClass = Class.forName("net.minecraft.class_2585");
+                    MethodType ctorType = MethodType.methodType(void.class, String.class);
+                    MethodHandle ctorMethod = lookup.findConstructor(literalTextClass, ctorType);
+
+                    return ctorMethod.invoke(text);
+                } catch (Throwable e3) {
+                    LOGGER.error("Couldn't create literal text for {}", text, e3);
+                }
             }
         }
         throw new IllegalStateException(String.format("Text.of class couldn't be found for %s", VersionMixinPlugin.getMinecraftVersion()));

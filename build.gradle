@@ -16,8 +16,4 @@ allprojects {
 subprojects {
 	version = project.mod_version
 	group = project.maven_group
-
-	tasks.withType(JavaCompile).configureEach {
-		it.options.release = 12
-	}
 }

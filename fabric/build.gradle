@@ -49,14 +49,8 @@ processResources {
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
-    it.options.release = 12
-}
-
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(12)
+        languageVersion = JavaLanguageVersion.of(8)
     }
-    sourceCompatibility = JavaVersion.VERSION_12
-    targetCompatibility = JavaVersion.VERSION_12
 }

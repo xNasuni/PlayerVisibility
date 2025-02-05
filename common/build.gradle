@@ -52,6 +52,8 @@ publishing {
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
-    it.options.release = 8
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
 }

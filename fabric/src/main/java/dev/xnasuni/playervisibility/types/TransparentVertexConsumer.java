@@ -21,12 +21,10 @@ public class TransparentVertexConsumer<E extends Entity> implements VertexConsum
         try {
             vertexFFF = parent.getClass().getMethod("method_22912", float.class, float.class, float.class);
         } catch (Throwable ignored) {
-            PlayerVisibilityClient.LOGGER.error("No vertexFFF", ignored);
         }
         try {
             overlayII = parent.getClass().getMethod("method_60796", int.class, int.class);
         } catch (Throwable ignored) {
-            PlayerVisibilityClient.LOGGER.error("No overlayII", ignored);
         }
     }
 

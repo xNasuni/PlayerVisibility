@@ -2,7 +2,8 @@
 <img src="/assets/logo.png" width="160px" align="right"/>
 
 ![Modrinth Version](https://img.shields.io/modrinth/v/rEeBGDR0)
-<a href="https://modrinth.com/mod/player-visibility"><img src="https://img.shields.io/modrinth/dt/rEeBGDR0?logo=modrinth" alt="Modrinth Downloads"/></a>
+<a href="https://modrinth.com/mod/player-visibility"><img src="https://img.shields.io/modrinth/dt/rEeBGDR0?logo=modrinth&color=07a85c" alt="Modrinth Downloads"/></a>
+<a href="https://www.curseforge.com/minecraft/mc-mods/player-visibility"><img src="https://img.shields.io/curseforge/dt/890962?logo=curseforge&color=f16436"/></a>
 
 Hide players easily! PlayerVisibility is a fabric mod for Minecraft to hide other players and entities at a press of a key!
 

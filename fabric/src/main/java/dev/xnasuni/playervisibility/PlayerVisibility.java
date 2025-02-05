@@ -27,7 +27,6 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.MutableText;
 
 import org.lwjgl.glfw.GLFW;
 
@@ -108,7 +107,7 @@ public class PlayerVisibility implements ClientModInitializer {
                 nameField.setAccessible(true); // not sure if it's necessary also I'm not sure if I'm stupid but this SHOULD be okay????
 
                 Object textName = nameField.get(entity);
-                if (textName instanceof MutableText) {
+                if (textName instanceof net.minecraft.text.Text) {
                     playerUsername = ((net.minecraft.text.Text) textName).getString();
                 }
 
@@ -169,10 +168,20 @@ public class PlayerVisibility implements ClientModInitializer {
     }
 
     public static void sendMessage(Object text) {
-        if (text instanceof MutableText) {
+        try {
+            if (Class.forName("net.minecraft.class_5250").isAssignableFrom(text.getClass())) { // MutableText
+                sendMessage(((net.minecraft.text.Text) text).getString());
+                return;
+            }
+        } catch (Throwable ignored) {
+        }
+        if (text instanceof net.minecraft.text.Text) {
             sendMessage(((net.minecraft.text.Text) text).getString());
-        } else if (text instanceof String) {
+            return;
+        }
+        if (text instanceof String) {
             sendMessage(text);
+            return;
         }
     }
 

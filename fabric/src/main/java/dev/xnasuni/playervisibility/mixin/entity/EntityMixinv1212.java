@@ -14,6 +14,7 @@ import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 
+import net.minecraft.entity.player.PlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -26,7 +27,9 @@ public abstract class EntityMixinv1212 {
     private <E extends Entity> void wrapRender(E entity, double x, double y, double z, float yaw, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, Operation<Void> original) {
         transparency.put(entity, -1);
 
-        if (ModConfig.hidePlayers && PlayerVisibility.shouldHideEntity(entity)) {
+        boolean shouldHide = (entity instanceof PlayerEntity && ModConfig.hidePlayers) || (!(entity instanceof PlayerEntity) && ModConfig.hideEntities);
+
+        if (shouldHide && PlayerVisibility.shouldHideEntity(entity)) {
             if (ModConfig.comfortZone) {
                 double sqDst = this.getSquaredDistanceToCamera(entity);
                 double distance = Math.sqrt(sqDst);
