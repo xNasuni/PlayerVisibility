@@ -1,10 +1,33 @@
 pluginManagement {
     repositories {
         maven {
-            name = 'Fabric'
+            name = 'fabric'
             url = 'https://maven.fabricmc.net/'
         }
         mavenCentral()
         gradlePluginPortal()
     }
 }
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.5.0'
+}
+
+ext {
+    version = '1.2'
+}
+
+rootProject.name = 'player-visibility'
+
+include ':common'
+include ':fabric'
+
+//include ':forge'
+// omg I've been trying to make forge support for like the past 4 hours
+// I really don't know how to set this up I've tried so many example mods
+// and other stuff but I just can't do it if you know how to please dm me
+// on discord `lastingsunset` I tried like many like example like
+// projects and like its just like I DONT KNOWWW IM STUPID IM SORRRY 😭😭😭
+
+// for now I'm just not gonna care about forge
+// - mia/@xNasuni

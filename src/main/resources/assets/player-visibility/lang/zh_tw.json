@@ -1,9 +1,0 @@
-{
-  "key.player-visibility.toggle": "切換玩家可見度",
-  "category.player-visibility.main": "玩家可見度 （Player Visibility）",
-  "text.autoconfig.player-visibility.title": "玩家可見度組態",
-
-  "text.autoconfig.player-visibility.option.PlayerWhitelist.@PrefixText": "如果您想變更白名單，請使用指令 /visibility whitelist，而非變更下方內容。",
-  "text.autoconfig.player-visibility.option.PlayerWhitelist": "玩家可見度白名單",
-  "text.autoconfig.player-visibility.option.MainColor": "主要文字顏色"
-}

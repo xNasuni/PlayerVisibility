@@ -1,0 +1,62 @@
+plugins {
+	id 'fabric-loom' version '1.0-SNAPSHOT'
+	id 'maven-publish'
+}
+
+apply plugin: 'fabric-loom'
+apply plugin: 'maven-publish'
+
+archivesBaseName = "${rootProject.name}-${project.name}"
+
+repositories {
+    maven {
+        name = 'fabric'
+        url = 'https://maven.fabricmc.net/'
+    }
+    maven {
+        name = 'sponge'
+        url = 'https://repo.spongepowered.org/repository/maven-public/'
+    }
+    mavenCentral()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    implementation (annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.4.0"))
+
+    implementation "org.spongepowered:mixin:0.8.5"
+    implementation project(":common")
+}
+
+loom {
+    accessWidenerPath = file('src/main/resources/playervisibility.aw')
+}
+
+jar {
+    from project(":common").sourceSets.main.output
+}
+
+processResources {
+    inputs.property "version", project.version
+    filteringCharset "UTF-8"
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 12
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(12)
+    }
+    sourceCompatibility = JavaVersion.VERSION_12
+    targetCompatibility = JavaVersion.VERSION_12
+}

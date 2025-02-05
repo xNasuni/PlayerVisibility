@@ -1,21 +1,17 @@
-# PlayerVisibility <img src="/assets/logo.png" width="60px"/>
+## PlayerVisibility
+<img src="/assets/logo.png" width="160px" align="right"/>
 
->**PlayerVisibility** is a fabric mod for **Minecraft** that allows you **hide other players** at the **press** of a **key**, while also having a **whitelist** for some people to still show up.
->
->To learn more or how to use this mod visit [the wiki](https://github.com/xNasuni/PlayerVisibility/wiki).
->
-> Player Visibility is incompatible with [SkinShuffle](https://modrinth.com/mod/skinshuffle), if you find any more please make an issue so I can add them to this 'list'.
+![Modrinth Version](https://img.shields.io/modrinth/v/rEeBGDR0)
+<a href="https://modrinth.com/mod/player-visibility"><img src="https://img.shields.io/modrinth/dt/rEeBGDR0?logo=modrinth" alt="Modrinth Downloads"/></a>
 
->
-# Download
-> **[`Latest Version` `4f424d7c65e888daf3b931fc66f28ea430be91c9249b46c3ecf97c1ebf70d3eb`](https://github.com/xNasuni/PlayerVisibility/releases/latest)**
->
-> **[`Curse Forge`](https://www.curseforge.com/minecraft/mc-mods/player-visibility)**
-> **[`Modrinth`](https://modrinth.com/mod/player-visibility)**
+Hide players easily! PlayerVisibility is a fabric mod for Minecraft to hide other players and entities at a press of a key!
 
-## Usage
-> By the press of a key you can disable the rendering of players which can help for example if you were doing parkour in a server minigame which was multiplayer and you couldn't see infront of you because of them, you can simply toggle the visibility!
+| platform | link |
+| --- | --- |
+| <img src="https://modrinth.com/favicon.ico" width="24px" align="left"> Modrinth | [Download](https://modrinth.com/mod/player-visibility/versions/) |
+| <img src="https://static-beta.curseforge.com/images/favicon.ico" width="24px" align="left"> CurseForge | [Download](https://www.curseforge.com/minecraft/mc-mods/player-visibility/files/all) |
+| <img src="https://github.githubassets.com/favicons/favicon-dark.svg" width="24px" align="left"> GitHub | [Download](https://github.com/xNasuni/PlayerVisibility/releases/latest) |
 
-## Extra Information
-
-> If you want to request a feature or found a bug, please do it in [Issues](https://github.com/xNasuni/PlayerVisibility/issues)
+#### Help
+If you need help to figure out how to use this, check out the [Wiki](https://github.com/xNasuni/PlayerVisibility/wiki)!<br>
+If you want to report a bug or suggest a new feature, make an issue in [Issues](https://github.com/xNasuni/PlayerVisibility/issues)!
