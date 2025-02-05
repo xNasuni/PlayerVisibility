@@ -37,9 +37,11 @@ public class TransparentVertexConsumer<E extends Entity> implements VertexConsum
 
     // fill ins for 1.21+
     public VertexConsumer method_22912(float x, float y, float z) throws InvocationTargetException, IllegalAccessException {
+        vertexFFF.setAccessible(true);
         return (VertexConsumer) vertexFFF.invoke(parent, x, y, z);
     }
     public VertexConsumer method_60796(int u, int v) throws InvocationTargetException, IllegalAccessException {
+        overlayII.setAccessible(true);
         return (VertexConsumer) overlayII.invoke(parent, u, v);
     }
 

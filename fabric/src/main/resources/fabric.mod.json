@@ -3,7 +3,7 @@
   "id": "player-visibility",
   "version": "${version}",
   "name": "Player Visibility",
-  "description": "Hide other players and entities at a press of a key!",
+  "description": "Hide other players and entities at the press of a key!",
   "authors": [
     "xNasuni"
   ],
