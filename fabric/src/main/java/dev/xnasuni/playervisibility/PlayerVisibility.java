@@ -1,9 +1,9 @@
 package dev.xnasuni.playervisibility;
 
+import dev.xnasuni.crossfabric.multiversion.ClientCommandManager;
+import dev.xnasuni.crossfabric.multiversion.VersionedText;
 import dev.xnasuni.playervisibility.commands.VisibilityCommand;
 import dev.xnasuni.playervisibility.config.ModConfig;
-import dev.xnasuni.playervisibility.multiversion.ClientCommandManager;
-import dev.xnasuni.playervisibility.multiversion.Text;
 import dev.xnasuni.playervisibility.types.FilterType;
 import dev.xnasuni.playervisibility.types.MessageType;
 import dev.xnasuni.playervisibility.util.ArrayListUtil;
@@ -64,9 +64,9 @@ public class PlayerVisibility implements ClientModInitializer {
         });
 
         // Visibility command
-        ClientCommandManager.Register((dispatcher) -> {
+        ClientCommandManager.register((dispatcher) -> {
             try {
-                PlayerVisibility.registerCommands((CommandDispatcher<Object>) dispatcher);
+                PlayerVisibility.registerCommands(dispatcher);
             } catch (ClassCastException e) {
                 LOGGER.error("Couldn't cast dispatcher as command source", e);
             }
@@ -81,11 +81,11 @@ public class PlayerVisibility implements ClientModInitializer {
 
     public static void toggleFilter() {
         filterEnabled = !filterEnabled;
-        String VisibleString = "§c" + ((net.minecraft.text.Text)Text.translatable("text.player-visibility.message.off")).getString();
+        String VisibleString = "§c" + (VersionedText.translatable("text.player-visibility.message.off")).getString();
         if (filterEnabled) {
-            VisibleString = "§" + ModConfig.mainColor.getChar() + ((net.minecraft.text.Text)Text.translatable("text.player-visibility.message.on")).getString();
+            VisibleString = "§" + ModConfig.mainColor.getChar() + (VersionedText.translatable("text.player-visibility.message.on")).getString();
         }
-        sendMessage((Text.translatable("text.player-visibility.message.visibility-toggle", ModConfig.mainColor.getChar(), VisibleString)));
+        sendMessage((VersionedText.translatable("text.player-visibility.message.visibility-toggle", ModConfig.mainColor.getChar(), VisibleString)));
     }
 
     public static boolean isVisibilityEnabled() {
@@ -200,10 +200,10 @@ public class PlayerVisibility implements ClientModInitializer {
 //        }
 
         if (ModConfig.messageType == MessageType.CHAT_MESSAGE) {
-            minecraftClient.player.sendMessage(((net.minecraft.text.Text)Text.of(messagePrefix + message)), false);
+            minecraftClient.player.sendMessage((VersionedText.of(messagePrefix + message)), false);
         }
         if (ModConfig.messageType == MessageType.ACTION_BAR) {
-            minecraftClient.player.sendMessage(((net.minecraft.text.Text)Text.of(message)), true);
+            minecraftClient.player.sendMessage((VersionedText.of(message)), true);
         }
 //        if (ModConfig.messageType == MessageType.HIDDEN) {
 //          //do nothing LOL why did I even write this if statement I'm so silly🥺🥺🥺

@@ -1,8 +1,8 @@
 package dev.xnasuni.playervisibility.mixin.hitbox;
 
+import dev.xnasuni.crossfabric.annotation.VersionedMixin;
 import dev.xnasuni.playervisibility.PlayerVisibility;
 import dev.xnasuni.playervisibility.config.ModConfig;
-import dev.xnasuni.playervisibility.multiversion.VersionedMixin;
 
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;

@@ -1,8 +1,8 @@
 package dev.xnasuni.playervisibility.mixin.fire;
 
+import dev.xnasuni.crossfabric.annotation.VersionedMixin;
 import dev.xnasuni.playervisibility.PlayerVisibility;
 import dev.xnasuni.playervisibility.config.ModConfig;
-import dev.xnasuni.playervisibility.multiversion.VersionedMixin;
 
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;

@@ -1,8 +1,8 @@
 package dev.xnasuni.playervisibility.mixin.entity;
 
+import dev.xnasuni.crossfabric.annotation.VersionedMixin;
 import dev.xnasuni.playervisibility.PlayerVisibility;
 import dev.xnasuni.playervisibility.config.ModConfig;
-import dev.xnasuni.playervisibility.multiversion.VersionedMixin;
 import dev.xnasuni.playervisibility.types.TransparentVertexConsumerProvider;
 import static dev.xnasuni.playervisibility.PlayerVisibility.transparency;
 
@@ -19,8 +19,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(value = EntityRenderDispatcher.class, priority = 1001)
-@VersionedMixin({">=1.21.2"})
-public abstract class EntityMixinv1212 {
+@VersionedMixin({">=1.21.2", "<=1.21.4"})
+public abstract class EntityMixinv1212m1214 {
     @Shadow public abstract double getSquaredDistanceToCamera(Entity entity);
 
     @WrapMethod(method = "(Lnet/minecraft/class_1297;DDDFLnet/minecraft/class_4587;Lnet/minecraft/class_4597;I)V")
