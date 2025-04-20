@@ -1,6 +1,6 @@
 package dev.xnasuni.playervisibility.commands;
 
-import dev.xnasuni.crossfabric.multiversion.VersionedText;
+import win.transgirls.crossfabric.multiversion.VersionedText;
 import dev.xnasuni.playervisibility.PlayerVisibility;
 import dev.xnasuni.playervisibility.PlayerVisibilityClient;
 import dev.xnasuni.playervisibility.config.ModConfig;

@@ -23,7 +23,7 @@ gradle-app.setting
 
 # Fabric Folders & Other
 run
-libs
+fabric/libs
 
 hs_err*.log
 replay*.log

@@ -1,6 +1,6 @@
 package dev.xnasuni.playervisibility.mixin.fire;
 
-import dev.xnasuni.crossfabric.annotation.VersionedMixin;
+import win.transgirls.crossfabric.annotation.VersionedMixin;
 import dev.xnasuni.playervisibility.PlayerVisibility;
 import dev.xnasuni.playervisibility.config.ModConfig;
 

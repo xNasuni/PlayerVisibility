@@ -3,22 +3,26 @@
   "minVersion": "0.8",
   "package": "dev.xnasuni.playervisibility.mixin",
   "compatibilityLevel": "JAVA_8",
-  "plugin": "dev.xnasuni.crossfabric.multiversion.VersionedMixinPluginImpl",
+  "plugin": "win.transgirls.crossfabric.multiversion.VersionedMixinPluginImpl",
   "mixins": [
   ],
   "client": [
     "entity.EntityMixinv115m1211",
     "entity.EntityMixinv1212m1214",
+    "entity.EntityMixinv1215",
     "fire.FireMixinv115m1202",
     "fire.FireMixinv1203m1211",
     "fire.FireMixinv1212m1214",
+    "fire.FireMixinv1215",
     "hitbox.HitboxMixinv115m1165",
     "hitbox.HitboxMixinv117m1206",
+    "hitbox.HitboxMixinv1215",
     "hitbox.HitboxMixinv121m1214",
     "label.LabelMixinv115m1211",
-    "label.LabelMixinv1212m1214",
+    "label.LabelMixinv1212",
     "shadow.ShadowMixinv115m1211",
-    "shadow.ShadowMixinv1212m1214"
+    "shadow.ShadowMixinv1212m1214",
+    "shadow.ShadowMixinv1215"
   ],
   "injectors": {
     "defaultRequire": 1

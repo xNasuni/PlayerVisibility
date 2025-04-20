@@ -29,7 +29,8 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation "maven.modrinth:crossfabric:0.1.0"
+    modImplementation files("libs/crossfabric-0.1.1.jar")
+//    modImplementation "maven.modrinth:crossfabric:0.1.0"
 
     implementation (annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.4.0"))
 

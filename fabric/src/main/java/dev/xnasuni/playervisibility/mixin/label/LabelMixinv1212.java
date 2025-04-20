@@ -1,6 +1,6 @@
 package dev.xnasuni.playervisibility.mixin.label;
 
-import dev.xnasuni.crossfabric.annotation.VersionedMixin;
+import win.transgirls.crossfabric.annotation.VersionedMixin;
 import dev.xnasuni.playervisibility.PlayerVisibility;
 import dev.xnasuni.playervisibility.config.ModConfig;
 
@@ -13,10 +13,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = EntityRenderer.class, priority = 1001)
-@VersionedMixin({">=1.21.2", "<=1.21.4"})
-public class LabelMixinv1212m1214 {
+@VersionedMixin({">=1.21.2"})
+public class LabelMixinv1212 {
     @Inject(method = "(Lnet/minecraft/class_1297;D)Z", at = @At("HEAD"), cancellable = true)
-    private void injectHasLabel(Entity entity, double unk, CallbackInfoReturnable<Boolean> cir) {
+    private void injectHasLabel(Entity entity, double squaredDistanceToCamera, CallbackInfoReturnable<Boolean> cir) {
         if (ModConfig.hideNametags && PlayerVisibility.shouldHideEntity(entity)) {
             cir.setReturnValue(false);
         }
