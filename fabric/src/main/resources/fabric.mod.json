@@ -20,7 +20,7 @@
   "accessWidener": "playervisibility.aw",
   "entrypoints": {
     "client": [
-      "dev.xnasuni.playervisibility.PlayerVisibility"
+      "win.transgirls.playervisibility.PlayerVisibility"
     ]
   },
   "mixins": [

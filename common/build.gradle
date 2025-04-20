@@ -5,7 +5,7 @@ plugins {
 
 apply plugin: 'maven-publish'
 
-group = 'dev.xnasuni'
+group = 'win.transgirls'
 version = rootProject.version
 
 repositories {
