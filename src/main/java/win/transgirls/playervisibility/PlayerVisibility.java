@@ -44,9 +44,6 @@ public class PlayerVisibility implements ClientModInitializer {
     private static boolean filterEnabled = true;
     private static KeyBinding toggleFilter;
 
-    public static HashMap<EntityRenderState, Float> transparency = new HashMap<>();
-
-
     @Override
     public void onInitializeClient() {
         ConfigUtil.init();
