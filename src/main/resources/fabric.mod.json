@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "player-visibility",
+  "version": "${version}",
+  "name": "Player Visibility",
+  "description": "Hide other players and entities at the press of a key!",
+  "authors": [
+    "xNasuni"
+  ],
+  "contributors": [
+    "Sn0wix_"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": "https://github.com/xNasuni/PlayerVisibility",
+    "issues": "https://github.com/xNasuni/PlayerVisibility/issues"
+  },
+  "license": "BSD 3 Clause",
+  "icon": "assets/player-visibility/icon.png",
+  "environment": "client",
+  "accessWidener": "playervisibility.aw",
+  "entrypoints": {
+    "client": [
+      "win.transgirls.playervisibility.PlayerVisibility"
+    ]
+  },
+  "mixins": [
+    "player-visibility.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "fabric": "*",
+    "minecraft": ">=1.16.5",
+    "java": ">=7"
+  },
+  "suggests": {
+  },
+  "custom": {
+    "modmenu": {
+      "update_checker": true
+    }
+  }
+}

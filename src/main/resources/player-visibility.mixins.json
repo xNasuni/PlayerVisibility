@@ -1,0 +1,21 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "win.transgirls.playervisibility.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "plugin": "win.transgirls.crossfabric.multiversion.VersionedMixinPluginImpl",
+  "mixins": [
+  ],
+  "client": [
+    "entity.LivingEntityRendererMixin",
+    "entity.PlayerEntityRendererMixin",
+    "fire.FireMixin",
+    "hitbox.HitboxMixin",
+    "label.LabelMixin",
+    "label.PlayerLabelMixin",
+    "shadow.ShadowMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
