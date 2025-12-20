@@ -1,6 +1,6 @@
 plugins {
-	id 'fabric-loom' version '1.0-SNAPSHOT'
-	id 'maven-publish'
+    id 'fabric-loom' apply false
+    id 'maven-publish'
 }
 
 apply plugin: 'fabric-loom'
@@ -24,22 +24,22 @@ repositories {
     mavenCentral()
 }
 
+remapJar {
+    addNestedDependencies = true
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation files("libs/crossfabric-0.1.1.jar")
-//    modImplementation "maven.modrinth:crossfabric:0.1.0"
 
-    implementation (annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.4.0"))
+    include(modImplementation("maven.modrinth:crossfabric:0.1.1"))
+
+    api "io.github.llamalad7:mixinextras-fabric:0.5.0"
 
     implementation "org.spongepowered:mixin:0.8.5"
     implementation project(":common")
-}
-
-loom {
-    accessWidenerPath = file('src/main/resources/playervisibility.aw')
 }
 
 jar {
@@ -57,6 +57,6 @@ processResources {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(8)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
