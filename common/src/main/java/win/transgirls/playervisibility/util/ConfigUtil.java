@@ -1,10 +1,8 @@
 package win.transgirls.playervisibility.util;
 
 import win.transgirls.playervisibility.config.ModConfig;
-import win.transgirls.playervisibility.types.FilterType;
-import win.transgirls.playervisibility.types.MessageType;
-import win.transgirls.playervisibility.types.SerializedModConfig;
-import win.transgirls.playervisibility.types.TextColor;
+import win.transgirls.playervisibility.types.*;
+
 import static win.transgirls.playervisibility.PlayerVisibilityClient.LOGGER;
 
 import com.google.gson.*;
@@ -43,6 +41,8 @@ public class ConfigUtil {
     public static Path configDirectory;
     private static Path modernConfigFilePath;
     private static Path v011orLessLegacyFilePath;
+    private static Path tooManyPlayersConfigFilePath;
+    private static Path eventUtilsConfigFilePath;
     private static Gson configGson;
 
     public static <T> T fallbackField(String field, JsonObject root, T fallback) {
@@ -86,6 +86,7 @@ public class ConfigUtil {
         }
         return fallback;
     }
+
     public static ArrayList<String> getLegacyWhitelist() {
         ArrayList<String> legacyWhitelist = new ArrayList<>();
         try {
@@ -97,17 +98,22 @@ public class ConfigUtil {
         }
         return legacyWhitelist;
     }
+
     public static String filesReadString(Path path) throws IOException {
         return ArrayListUtil.joinSeperator(Files.readAllLines(path), "\n");
     }
 
-    public static void init() {
+    public static MigrationKind init() {
         configGson = new GsonBuilder().serializeNulls().setLenient().create();
         configDirectory = FabricLoader.getInstance().getConfigDir().resolve("player-visibility");
         modernConfigFilePath = configDirectory.resolve("pv-config.json");
         v011orLessLegacyFilePath = configDirectory.resolve("whitelisted-players.txt");
+        tooManyPlayersConfigFilePath = FabricLoader.getInstance().getConfigDir().resolve("toomanyplayers.json");
+        eventUtilsConfigFilePath = FabricLoader.getInstance().getConfigDir().resolve("eventutils.json");
 
-        ArrayList<String> legacyWhitelist = null;
+        ArrayList<String> legacyWhitelist = new ArrayList<>();
+        ArrayList<String> migratedWhitelist = new ArrayList<>();
+        MigrationKind kind = MigrationKind.None;
 
         try {
             Files.createDirectories(configDirectory);
@@ -115,7 +121,41 @@ public class ConfigUtil {
             LOGGER.error("Could not create config directory, issues might arise further.", e);
         }
 
-        // if an old whitelist file |whitelisted-players.txt| exists, but no new config |pv-config.json| exists, we will migrate the whitelist to the new config.
+        // if a legacy whitelist file |whitelisted-players.txt| and a modern config file |pv-config.json| both don't exist, we will migrate the whitelists from other potential mods
+        if (!Files.exists(v011orLessLegacyFilePath) && !Files.exists(modernConfigFilePath)) {
+            String jsonConfig = "";
+            String jsonKey = "";
+
+            try {
+                jsonConfig = filesReadString(tooManyPlayersConfigFilePath);
+                jsonKey = "whitelist";
+                kind = MigrationKind.TooManyPlayers;
+            } catch (Throwable ignored) {
+                try {
+                    jsonConfig = filesReadString(eventUtilsConfigFilePath);
+                    jsonKey = "whitelisted_players";
+                    kind = MigrationKind.EventUtils;
+                } catch (Throwable ignored2) {
+                }
+            }
+
+            try {
+                JsonObject object = configGson.fromJson(jsonConfig, JsonElement.class).getAsJsonObject();
+                JsonArray array = object.getAsJsonArray(jsonKey);
+                array.asList().forEach((jsonElement -> {
+                    if (jsonElement.isJsonPrimitive() && jsonElement.getAsJsonPrimitive().isString()) {
+                        migratedWhitelist.add(jsonElement.getAsString());
+                    }
+                }));
+
+                if (migratedWhitelist.isEmpty()) {
+                    LOGGER.error("Failed to migrate {} whitelist (potentially caused by list being empty)", kind.name());
+                }
+            } catch (Throwable ignored) {
+            }
+        }
+
+        // if a legacy whitelist file |whitelisted-players.txt| exists, but no new config |pv-config.json| exists, we will migrate the whitelist to the new config.
         if (Files.exists(v011orLessLegacyFilePath) && !Files.exists(modernConfigFilePath)) {
             legacyWhitelist = getLegacyWhitelist();
             if (legacyWhitelist != null) {
@@ -131,12 +171,25 @@ public class ConfigUtil {
                 LOGGER.info("No config file found! Creating a new one.");
             } catch (IOException e) {
                 LOGGER.error("Failed to create config file `pv-config.json`, mod will try again when saving.", e);
-                return;
+                return MigrationKind.None;
             }
         }
 
+        // prefer player visibility legacy whitelist, fallback to other mods
+        boolean shouldUseMigrated = (legacyWhitelist == null || legacyWhitelist.isEmpty()) && !migratedWhitelist.isEmpty();
+
+        if (shouldUseMigrated) {
+            legacyWhitelist = migratedWhitelist;
+        }
+
+        if (legacyWhitelist != null && legacyWhitelist.isEmpty()) {
+            legacyWhitelist = null;
+        }
+
         load(legacyWhitelist);
+        return kind;
     }
+
     public static void reset() {
         ModConfig.filterPresets = defaultFilterPresets;
         ModConfig.currentPreset = defaultCurrentPreset;
@@ -154,6 +207,7 @@ public class ConfigUtil {
         ModConfig.comfortDistance = defaultComfortDistance;
         ModConfig.comfortFalloff = defaultComfortFalloff;
     }
+
     public static void load(ArrayList<String> legacyWhitelist) {
         File configFile = modernConfigFilePath.toFile();
 
@@ -204,6 +258,7 @@ public class ConfigUtil {
             LOGGER.warn("Cannot read file 'pv-config.json', defaulting config.");
         }
     }
+
     public static void save() {
         SerializedModConfig serialized = ModConfig.serialize();
         String json = configGson.toJson(serialized);
