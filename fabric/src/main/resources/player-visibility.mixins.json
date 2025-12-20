@@ -7,22 +7,18 @@
   "mixins": [
   ],
   "client": [
-    "entity.EntityMixinv115m1211",
-    "entity.EntityMixinv1212m1214",
-    "entity.EntityMixinv1215",
+    "entity.LivingEntityRendererMixinv115m1206",
+    "entity.LivingEntityRendererMixinv1212m1218",
+    "entity.LivingEntityRendererMixinv121m1211",
     "fire.FireMixinv115m1202",
     "fire.FireMixinv1203m1211",
-    "fire.FireMixinv1212m1214",
-    "fire.FireMixinv1215",
-    "hitbox.HitboxMixinv115m1165",
-    "hitbox.HitboxMixinv117m1206",
-    "hitbox.HitboxMixinv1215",
+    "fire.FireMixinv1212m1218",
+    "hitbox.HitboxMixinv115m1206",
+    "hitbox.HitboxMixinv1215m1218",
     "hitbox.HitboxMixinv121m1214",
-    "label.LabelMixinv115m1211",
-    "label.LabelMixinv1212",
     "shadow.ShadowMixinv115m1211",
     "shadow.ShadowMixinv1212m1214",
-    "shadow.ShadowMixinv1215"
+    "shadow.ShadowMixinv1215m1218"
   ],
   "injectors": {
     "defaultRequire": 1
