@@ -14,11 +14,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import win.transgirls.crossfabric.annotation.VersionedMixin;
 
 @Mixin(value = EntityRenderDispatcher.class, priority = 1001)
-@VersionedMixin({">=1.21.5"})
-public class ShadowMixinv1215 {
+@VersionedMixin({">=1.21.5", "<=1.21.8"})
+public class ShadowMixinv1215m1218 {
     @Inject(method = "(Lnet/minecraft/class_4587;Lnet/minecraft/class_4597;Lnet/minecraft/class_10017;FLnet/minecraft/class_4538;F)V", at = @At("HEAD"), cancellable = true)
     private static void injectShadow(MatrixStack matrices, VertexConsumerProvider vertexConsumers, @Coerce Object entity, float opacity, WorldView world, float radius, CallbackInfo ci) {
-        if (ModConfig.hideShadows && PlayerVisibility.shouldHideEntityRenderState(entity)) {
+        if (ModConfig.hideShadows && PlayerVisibility.computeHideInfoForEntityOrState(entity).hide) {
             ci.cancel();
         }
     }
