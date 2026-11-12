@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.text.Text;
 import win.transgirls.playervisibility.PlayerVisibility;
@@ -120,7 +121,7 @@ public class VisibilityCommand {
             return builder.buildFuture();
         };
 
-        dispatcher.register(literal("visibility")
+        LiteralCommandNode<Object> root = dispatcher.register(literal("playervisibility")
                 .then(literal("whitelist")
                         .then(literal("add")
                                 .then(argument("username", string())
@@ -551,5 +552,7 @@ public class VisibilityCommand {
                             return Command.SINGLE_SUCCESS;
                         })
                 ));
+
+        dispatcher.register(literal("visibility").redirect(root));
     }
 }
