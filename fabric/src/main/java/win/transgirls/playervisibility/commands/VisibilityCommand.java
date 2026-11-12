@@ -1,6 +1,12 @@
 package win.transgirls.playervisibility.commands;
 
-import win.transgirls.crossfabric.multiversion.VersionedText;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.text.Text;
 import win.transgirls.playervisibility.PlayerVisibility;
 import win.transgirls.playervisibility.PlayerVisibilityClient;
 import win.transgirls.playervisibility.config.ModConfig;
@@ -10,24 +16,16 @@ import win.transgirls.playervisibility.types.TextColor;
 import win.transgirls.playervisibility.util.ArrayListUtil;
 import win.transgirls.playervisibility.util.ConfigUtil;
 import win.transgirls.playervisibility.util.HighlightUtil;
-import static win.transgirls.playervisibility.PlayerVisibility.minecraftClient;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.Objects;
 
-import com.mojang.brigadier.Command;
-import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.suggestion.SuggestionProvider;
 import static com.mojang.brigadier.arguments.FloatArgumentType.floatArg;
 import static com.mojang.brigadier.arguments.FloatArgumentType.getFloat;
 import static com.mojang.brigadier.arguments.StringArgumentType.getString;
 import static com.mojang.brigadier.arguments.StringArgumentType.string;
 import static com.mojang.brigadier.builder.LiteralArgumentBuilder.literal;
 import static com.mojang.brigadier.builder.RequiredArgumentBuilder.argument;
-
-import java.util.Objects;
-
-import net.minecraft.client.network.PlayerListEntry;
+import static win.transgirls.playervisibility.PlayerVisibility.mc;
 
 public class VisibilityCommand {
     public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -41,7 +39,7 @@ public class VisibilityCommand {
         SuggestionProvider<Object> usernameSuggestionProvider = (context, builder) -> {
             String input = builder.getRemaining().toLowerCase();
 
-            for (String Suggestion: ModConfig.getFilter()) {
+            for (String Suggestion : ModConfig.getFilter()) {
                 if (Suggestion.toLowerCase().startsWith(input)) {
                     builder.suggest(Suggestion);
                 }
@@ -52,9 +50,9 @@ public class VisibilityCommand {
         SuggestionProvider<Object> ingamePlayerSuggestionProvider = (context, builder) -> {
             String input = builder.getRemaining().toLowerCase();
 
-            if (minecraftClient.getNetworkHandler() != null) {
-                for (PlayerListEntry player: minecraftClient.getNetworkHandler().getPlayerList()) {
-                    String suggestion = player.getProfile().getName();
+            if (mc.getNetworkHandler() != null) {
+                for (PlayerListEntry player : mc.getNetworkHandler().getPlayerList()) {
+                    String suggestion = player.getProfile().name();
                     if (suggestion.toLowerCase().startsWith(input)) {
                         builder.suggest(suggestion);
                     }
@@ -66,7 +64,7 @@ public class VisibilityCommand {
         SuggestionProvider<Object> colorSuggestionProvider = (context, builder) -> {
             String input = builder.getRemaining().toLowerCase();
 
-            for (TextColor color: TextColor.values()) {
+            for (TextColor color : TextColor.values()) {
                 String suggestion = color.name();
                 if (suggestion.toLowerCase().startsWith(input)) {
                     builder.suggest(suggestion);
@@ -78,7 +76,7 @@ public class VisibilityCommand {
         SuggestionProvider<Object> messageTypeSuggestionProvider = (context, builder) -> {
             String input = builder.getRemaining().toLowerCase();
 
-            for (MessageType type: MessageType.values()) {
+            for (MessageType type : MessageType.values()) {
                 String suggestion = type.name();
                 if (suggestion.toLowerCase().startsWith(input)) {
                     builder.suggest(suggestion);
@@ -90,7 +88,7 @@ public class VisibilityCommand {
         SuggestionProvider<Object> filterTypeSuggestionProvider = (context, builder) -> {
             String input = builder.getRemaining().toLowerCase();
 
-            for (FilterType type: FilterType.values()) {
+            for (FilterType type : FilterType.values()) {
                 String suggestion = type.name();
                 if (suggestion.toLowerCase().startsWith(input)) {
                     builder.suggest(suggestion);
@@ -102,7 +100,7 @@ public class VisibilityCommand {
         SuggestionProvider<Object> booleanSuggestionProvider = (context, builder) -> {
             String input = builder.getRemaining().toLowerCase();
 
-            for (String suggestion: booleans) {
+            for (String suggestion : booleans) {
                 if (suggestion.toLowerCase().startsWith(input)) {
                     builder.suggest(suggestion);
                 }
@@ -113,7 +111,7 @@ public class VisibilityCommand {
         SuggestionProvider<Object> presetLabelSuggestionProvider = (context, builder) -> {
             String input = builder.getRemaining().toLowerCase();
 
-            for (String label: ModConfig.filterPresets.keySet()) {
+            for (String label : ModConfig.filterPresets.keySet()) {
                 if (label.toLowerCase().startsWith(input)) {
                     builder.suggest(label);
                 }
@@ -132,12 +130,12 @@ public class VisibilityCommand {
                                             String casedName = ArrayListUtil.getCase(ModConfig.getFilter(), username);
 
                                             if (ArrayListUtil.containsLowercase(ModConfig.getFilter(), username)) {
-                                                PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.already-whitelisted", casedName));
+                                                PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.already-whitelisted", casedName));
                                                 return Command.SINGLE_SUCCESS;
                                             }
 
                                             ModConfig.getFilter().add(username);
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.add-whitelist", ModConfig.mainColor.getChar(), casedName, ModConfig.mainColor.getChar()));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.add-whitelist", ModConfig.mainColor.getChar(), casedName, ModConfig.mainColor.getChar()));
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )
@@ -148,14 +146,14 @@ public class VisibilityCommand {
                                         .executes(ctx -> {
                                             String username = getString(ctx, "username");
                                             String casedName = ArrayListUtil.getCase(ModConfig.getFilter(), username);
-                                            
+
                                             if (!ArrayListUtil.containsLowercase(ModConfig.getFilter(), username)) {
-                                                PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.not-whitelisted", casedName));
+                                                PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.not-whitelisted", casedName));
                                                 return Command.SINGLE_SUCCESS;
                                             }
 
                                             ModConfig.getFilter().remove(casedName);
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.remove-whitelist", ModConfig.mainColor.getChar(), casedName, ModConfig.mainColor.getChar()));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.remove-whitelist", ModConfig.mainColor.getChar(), casedName, ModConfig.mainColor.getChar()));
 
                                             return Command.SINGLE_SUCCESS;
                                         })
@@ -164,15 +162,15 @@ public class VisibilityCommand {
                         .then(literal("clear")
                                 .executes(ctx -> {
                                     int sizeBeforeClear = ModConfig.getFilter().size();
-                                    String sizeCountName = (sizeBeforeClear == 1 ? VersionedText.translatable("text.player-visibility.message.singular") : VersionedText.translatable("text.player-visibility.message.plural")).getString();
+                                    String sizeCountName = (sizeBeforeClear == 1 ? Text.translatable("text.player-visibility.message.singular") : Text.translatable("text.player-visibility.message.plural")).getString();
 
                                     if (sizeBeforeClear == 0) {
-                                        PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.already-cleared"));
+                                        PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.already-cleared"));
                                         return Command.SINGLE_SUCCESS;
                                     }
 
                                     ModConfig.getFilter().clear();
-                                    PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.clear-whitelist", ModConfig.mainColor.getChar(), ModConfig.mainColor.getChar(), sizeBeforeClear, VersionedText.translatable("text.player-visibility.message.entry-prefix"), sizeCountName));
+                                    PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.clear-whitelist", ModConfig.mainColor.getChar(), ModConfig.mainColor.getChar(), sizeBeforeClear, Text.translatable("text.player-visibility.message.entry-prefix"), sizeCountName));
 
                                     return Command.SINGLE_SUCCESS;
                                 })
@@ -180,7 +178,7 @@ public class VisibilityCommand {
                         .then(literal("view")
                                 .executes(ctx -> {
                                     if (ModConfig.getFilter().isEmpty()) {
-                                        PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.empty-whitelist"));
+                                        PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.empty-whitelist"));
                                         return Command.SINGLE_SUCCESS;
                                     }
 
@@ -188,7 +186,7 @@ public class VisibilityCommand {
                                     whitelistString.append(String.format("'%s': ", ModConfig.currentPreset));
 
                                     int idx = 0;
-                                    for (String whitelistedUsername: ModConfig.getFilter()) {
+                                    for (String whitelistedUsername : ModConfig.getFilter()) {
                                         idx++;
                                         if (idx <= 1) {
                                             whitelistString.append(String.format("§%c'%s'§f", ModConfig.mainColor.getChar(), whitelistedUsername));
@@ -197,7 +195,7 @@ public class VisibilityCommand {
                                         }
                                     }
 
-                                    whitelistString.append(String.format(" §f(§%c%s %s%s§f)", ModConfig.mainColor.getChar(), ModConfig.getFilter().size(), VersionedText.translatable("text.player-visibility.message.entry-prefix").getString(), ModConfig.getFilter().size() == 1 ? VersionedText.translatable("text.player-visibility.message.singular").getString() : VersionedText.translatable("text.player-visibility.message.plural").getString()));
+                                    whitelistString.append(String.format(" §f(§%c%s %s%s§f)", ModConfig.mainColor.getChar(), ModConfig.getFilter().size(), Text.translatable("text.player-visibility.message.entry-prefix").getString(), ModConfig.getFilter().size() == 1 ? Text.translatable("text.player-visibility.message.singular").getString() : Text.translatable("text.player-visibility.message.plural").getString()));
 
                                     PlayerVisibility.sendMessage(whitelistString.toString());
                                     return Command.SINGLE_SUCCESS;
@@ -212,12 +210,12 @@ public class VisibilityCommand {
                                             String labelInput = getString(ctx, "label");
 
                                             if (!ModConfig.filterPresets.containsKey(labelInput)) {
-                                                PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.no-load-preset", labelInput));
+                                                PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.no-load-preset", labelInput));
                                                 return Command.SINGLE_SUCCESS;
                                             }
 
                                             ModConfig.currentPreset = labelInput;
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.load-preset", ModConfig.mainColor.getChar(), labelInput, ModConfig.mainColor.getChar(), ModConfig.getFilter().size(), VersionedText.translatable("text.player-visibility.message.entry-prefix").getString(), ModConfig.getFilter().size() == 1 ? VersionedText.translatable("text.player-visibility.message.singular").getString() : VersionedText.translatable("text.player-visibility.message.plural").getString()));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.load-preset", ModConfig.mainColor.getChar(), labelInput, ModConfig.mainColor.getChar(), ModConfig.getFilter().size(), Text.translatable("text.player-visibility.message.entry-prefix").getString(), ModConfig.getFilter().size() == 1 ? Text.translatable("text.player-visibility.message.singular").getString() : Text.translatable("text.player-visibility.message.plural").getString()));
 
                                             return Command.SINGLE_SUCCESS;
                                         })
@@ -230,7 +228,7 @@ public class VisibilityCommand {
                                             String labelInput = getString(ctx, "label");
 
                                             ModConfig.filterPresets.put(labelInput, ArrayListUtil.cloneref(ModConfig.getFilter()));
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.save-preset", ModConfig.mainColor.getChar(), labelInput, ModConfig.mainColor.getChar(), ModConfig.getFilter().size(), VersionedText.translatable("text.player-visibility.message.entry-prefix").getString(), ModConfig.getFilter().size() == 1 ? VersionedText.translatable("text.player-visibility.message.singular").getString() : VersionedText.translatable("text.player-visibility.message.plural").getString()));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.save-preset", ModConfig.mainColor.getChar(), labelInput, ModConfig.mainColor.getChar(), ModConfig.getFilter().size(), Text.translatable("text.player-visibility.message.entry-prefix").getString(), ModConfig.getFilter().size() == 1 ? Text.translatable("text.player-visibility.message.singular").getString() : Text.translatable("text.player-visibility.message.plural").getString()));
 
                                             return Command.SINGLE_SUCCESS;
                                         })
@@ -245,16 +243,16 @@ public class VisibilityCommand {
                                             PlayerVisibilityClient.LOGGER.info("So the current preset is {} while the label input is {}, they are {}", ModConfig.currentPreset, labelInput, ModConfig.currentPreset == labelInput ? "IDENTICAL" : "DIFFERENT");
 
                                             if (!ModConfig.filterPresets.containsKey(labelInput)) {
-                                                PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.no-load-preset", labelInput));
+                                                PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.no-load-preset", labelInput));
                                                 return Command.SINGLE_SUCCESS;
                                             }
 
                                             if (Objects.equals(ModConfig.currentPreset, labelInput)) {
-                                                PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.no-delete-preset", labelInput));
+                                                PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.no-delete-preset", labelInput));
                                                 return Command.SINGLE_SUCCESS;
                                             }
 
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.delete-preset", ModConfig.mainColor.getChar(), labelInput, ModConfig.mainColor.getChar(), ModConfig.getFilter().size(), VersionedText.translatable("text.player-visibility.message.entry-prefix").getString(), ModConfig.getFilter().size() == 1 ? VersionedText.translatable("text.player-visibility.message.singular").getString() : VersionedText.translatable("text.player-visibility.message.plural").getString()));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.delete-preset", ModConfig.mainColor.getChar(), labelInput, ModConfig.mainColor.getChar(), ModConfig.getFilter().size(), Text.translatable("text.player-visibility.message.entry-prefix").getString(), ModConfig.getFilter().size() == 1 ? Text.translatable("text.player-visibility.message.singular").getString() : Text.translatable("text.player-visibility.message.plural").getString()));
                                             ModConfig.filterPresets.remove(labelInput);
 
                                             return Command.SINGLE_SUCCESS;
@@ -273,7 +271,7 @@ public class VisibilityCommand {
                         )
                         .then(literal("reset")
                                 .executes(ctx -> {
-                                    PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.reset-config", ModConfig.mainColor.getChar()));
+                                    PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.reset-config", ModConfig.mainColor.getChar()));
 
                                     ConfigUtil.reset();
                                     return Command.SINGLE_SUCCESS;
@@ -294,14 +292,14 @@ public class VisibilityCommand {
                                             }
 
                                             if (!isValid) {
-                                                PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.invalid-color", colorInput));
+                                                PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.invalid-color", colorInput));
                                                 return Command.SINGLE_SUCCESS;
                                             }
 
                                             ModConfig.mainColor = color;
                                             ConfigUtil.save();
 
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.changed-color", color.getChar(), color.getDisplayName()));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.changed-color", color.getChar(), color.getDisplayName()));
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )
@@ -321,14 +319,14 @@ public class VisibilityCommand {
                                             }
 
                                             if (!isValid) {
-                                                PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.invalid-type", typeInput));
+                                                PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.invalid-type", typeInput));
                                                 return Command.SINGLE_SUCCESS;
                                             }
 
                                             ModConfig.messageType = type;
                                             ConfigUtil.save();
 
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.changed-type", ModConfig.mainColor.getChar(), ModConfig.messageType.getDisplayName()));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.changed-type", ModConfig.mainColor.getChar(), ModConfig.messageType.getDisplayName()));
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )
@@ -348,14 +346,14 @@ public class VisibilityCommand {
                                             }
 
                                             if (!isValid) {
-                                                PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.invalid-filter", typeInput));
+                                                PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.invalid-filter", typeInput));
                                                 return Command.SINGLE_SUCCESS;
                                             }
 
                                             ModConfig.filterType = type;
                                             ConfigUtil.save();
 
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.changed-filter", ModConfig.mainColor.getChar(), ModConfig.filterType.getDisplayName()));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.changed-filter", ModConfig.mainColor.getChar(), ModConfig.filterType.getDisplayName()));
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )
@@ -368,14 +366,14 @@ public class VisibilityCommand {
                                             boolean isValid = boolInput.equalsIgnoreCase("true") || boolInput.equalsIgnoreCase("false");
 
                                             if (!isValid) {
-                                                PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.invalid-boolean", boolInput));
+                                                PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.invalid-boolean", boolInput));
                                                 return Command.SINGLE_SUCCESS;
                                             }
 
                                             ModConfig.hideSelf = Boolean.parseBoolean(boolInput.toLowerCase());
                                             ConfigUtil.save();
 
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), ModConfig.hideSelf ? VersionedText.translatable("text.player-visibility.message.hide-self") : VersionedText.translatable("text.player-visibility.message.show-self")));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), ModConfig.hideSelf ? Text.translatable("text.player-visibility.message.hide-self") : Text.translatable("text.player-visibility.message.show-self")));
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )
@@ -388,14 +386,14 @@ public class VisibilityCommand {
                                             boolean isValid = boolInput.equalsIgnoreCase("true") || boolInput.equalsIgnoreCase("false");
 
                                             if (!isValid) {
-                                                PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.invalid-boolean", boolInput));
+                                                PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.invalid-boolean", boolInput));
                                                 return Command.SINGLE_SUCCESS;
                                             }
 
                                             ModConfig.hidePlayers = Boolean.parseBoolean(boolInput.toLowerCase());
                                             ConfigUtil.save();
 
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), ModConfig.hidePlayers ? VersionedText.translatable("text.player-visibility.message.hide-players") : VersionedText.translatable("text.player-visibility.message.show-players")));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), ModConfig.hidePlayers ? Text.translatable("text.player-visibility.message.hide-players") : Text.translatable("text.player-visibility.message.show-players")));
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )
@@ -408,14 +406,14 @@ public class VisibilityCommand {
                                             boolean isValid = boolInput.equalsIgnoreCase("true") || boolInput.equalsIgnoreCase("false");
 
                                             if (!isValid) {
-                                                PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.invalid-boolean", boolInput));
+                                                PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.invalid-boolean", boolInput));
                                                 return Command.SINGLE_SUCCESS;
                                             }
 
                                             ModConfig.hideShadows = Boolean.parseBoolean(boolInput.toLowerCase());
                                             ConfigUtil.save();
 
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), ModConfig.hideShadows ? VersionedText.translatable("text.player-visibility.message.hide-shadows") : VersionedText.translatable("text.player-visibility.message.show-shadows")));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), ModConfig.hideShadows ? Text.translatable("text.player-visibility.message.hide-shadows") : Text.translatable("text.player-visibility.message.show-shadows")));
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )
@@ -428,14 +426,14 @@ public class VisibilityCommand {
                                             boolean isValid = boolInput.equalsIgnoreCase("true") || boolInput.equalsIgnoreCase("false");
 
                                             if (!isValid) {
-                                                PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.invalid-boolean", boolInput));
+                                                PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.invalid-boolean", boolInput));
                                                 return Command.SINGLE_SUCCESS;
                                             }
 
                                             ModConfig.hideEntities = Boolean.parseBoolean(boolInput.toLowerCase());
                                             ConfigUtil.save();
 
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), ModConfig.hideEntities ? VersionedText.translatable("text.player-visibility.message.hide-entities") : VersionedText.translatable("text.player-visibility.message.show-entities")));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), ModConfig.hideEntities ? Text.translatable("text.player-visibility.message.hide-entities") : Text.translatable("text.player-visibility.message.show-entities")));
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )
@@ -448,14 +446,14 @@ public class VisibilityCommand {
                                             boolean isValid = boolInput.equalsIgnoreCase("true") || boolInput.equalsIgnoreCase("false");
 
                                             if (!isValid) {
-                                                PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.invalid-boolean", boolInput));
+                                                PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.invalid-boolean", boolInput));
                                                 return Command.SINGLE_SUCCESS;
                                             }
 
                                             ModConfig.hideHitboxes = Boolean.parseBoolean(boolInput.toLowerCase());
                                             ConfigUtil.save();
 
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), ModConfig.hideHitboxes ? VersionedText.translatable("text.player-visibility.message.hide-hitboxes") : VersionedText.translatable("text.player-visibility.message.show-hitboxes")));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), ModConfig.hideHitboxes ? Text.translatable("text.player-visibility.message.hide-hitboxes") : Text.translatable("text.player-visibility.message.show-hitboxes")));
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )
@@ -468,14 +466,14 @@ public class VisibilityCommand {
                                             boolean isValid = boolInput.equalsIgnoreCase("true") || boolInput.equalsIgnoreCase("false");
 
                                             if (!isValid) {
-                                                PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.invalid-boolean", boolInput));
+                                                PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.invalid-boolean", boolInput));
                                                 return Command.SINGLE_SUCCESS;
                                             }
 
                                             ModConfig.hideFire = Boolean.parseBoolean(boolInput.toLowerCase());
                                             ConfigUtil.save();
 
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), ModConfig.hideFire ? VersionedText.translatable("text.player-visibility.message.hide-fire") : VersionedText.translatable("text.player-visibility.message.show-fire")));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), ModConfig.hideFire ? Text.translatable("text.player-visibility.message.hide-fire") : Text.translatable("text.player-visibility.message.show-fire")));
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )
@@ -488,14 +486,14 @@ public class VisibilityCommand {
                                             boolean isValid = boolInput.equalsIgnoreCase("true") || boolInput.equalsIgnoreCase("false");
 
                                             if (!isValid) {
-                                                PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.invalid-boolean", boolInput));
+                                                PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.invalid-boolean", boolInput));
                                                 return Command.SINGLE_SUCCESS;
                                             }
 
                                             ModConfig.hideNametags = Boolean.parseBoolean(boolInput.toLowerCase());
                                             ConfigUtil.save();
 
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), ModConfig.hideNametags ? VersionedText.translatable("text.player-visibility.message.hide-nametags") : VersionedText.translatable("text.player-visibility.message.show-nametags")));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), ModConfig.hideNametags ? Text.translatable("text.player-visibility.message.hide-nametags") : Text.translatable("text.player-visibility.message.show-nametags")));
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )
@@ -508,14 +506,14 @@ public class VisibilityCommand {
                                             boolean isValid = boolInput.equalsIgnoreCase("true") || boolInput.equalsIgnoreCase("false");
 
                                             if (!isValid) {
-                                                PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.invalid-boolean", boolInput));
+                                                PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.invalid-boolean", boolInput));
                                                 return Command.SINGLE_SUCCESS;
                                             }
 
                                             ModConfig.comfortZone = Boolean.parseBoolean(boolInput.toLowerCase());
                                             ConfigUtil.save();
 
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), ModConfig.comfortZone ? VersionedText.translatable("text.player-visibility.message.enable-comfort-zone") : VersionedText.translatable("text.player-visibility.message.disable-comfort-zone")));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), ModConfig.comfortZone ? Text.translatable("text.player-visibility.message.enable-comfort-zone") : Text.translatable("text.player-visibility.message.disable-comfort-zone")));
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )
@@ -528,7 +526,7 @@ public class VisibilityCommand {
                                             ModConfig.comfortDistance = distance;
                                             ConfigUtil.save();
 
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), VersionedText.translatable("text.player-visibility.message.change-comfort-distance", ModConfig.mainColor.getChar(), distance).getString()));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), Text.translatable("text.player-visibility.message.change-comfort-distance", ModConfig.mainColor.getChar(), distance).getString()));
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )
@@ -541,7 +539,7 @@ public class VisibilityCommand {
                                             ModConfig.comfortFalloff = falloff;
                                             ConfigUtil.save();
 
-                                            PlayerVisibility.sendMessage(VersionedText.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), VersionedText.translatable("text.player-visibility.message.change-comfort-falloff", ModConfig.mainColor.getChar(), falloff).getString()));
+                                            PlayerVisibility.sendMessage(Text.translatable("text.player-visibility.message.action-delimiter", ModConfig.mainColor.getChar(), Text.translatable("text.player-visibility.message.change-comfort-falloff", ModConfig.mainColor.getChar(), falloff).getString()));
                                             return Command.SINGLE_SUCCESS;
                                         })
                                 )

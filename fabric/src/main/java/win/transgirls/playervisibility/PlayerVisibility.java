@@ -7,28 +7,31 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.render.entity.state.EntityRenderState;
+import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 import win.transgirls.crossfabric.Constants;
 import win.transgirls.crossfabric.multiversion.ClientCommandManager;
-import win.transgirls.crossfabric.multiversion.VersionedText;
-import win.transgirls.crossfabric.tools.ClassUtils;
 import win.transgirls.playervisibility.commands.VisibilityCommand;
 import win.transgirls.playervisibility.config.ModConfig;
-import win.transgirls.playervisibility.types.*;
+import win.transgirls.playervisibility.types.EntityInfo;
+import win.transgirls.playervisibility.types.FilterType;
+import win.transgirls.playervisibility.types.HideInfo;
 import win.transgirls.playervisibility.util.ArrayListUtil;
 import win.transgirls.playervisibility.util.ConfigUtil;
 
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.WeakHashMap;
 
 import static win.transgirls.playervisibility.PlayerVisibilityClient.LOGGER;
 
 public class PlayerVisibility implements ClientModInitializer {
-    public static MinecraftClient minecraftClient;
+    public static MinecraftClient mc;
     public static Map<Object, Integer> transparency = new WeakHashMap<>();
     private static boolean filterEnabled = true;
     private static KeyBinding toggleFilter;
@@ -39,11 +42,11 @@ public class PlayerVisibility implements ClientModInitializer {
 
     public static void toggleFilter() {
         filterEnabled = !filterEnabled;
-        String VisibleString = "§c" + (VersionedText.translatable("text.player-visibility.message.off")).getString();
+        String VisibleString = "§c" + (Text.translatable("text.player-visibility.message.off")).getString();
         if (filterEnabled) {
-            VisibleString = "§" + ModConfig.mainColor.getChar() + (VersionedText.translatable("text.player-visibility.message.on")).getString();
+            VisibleString = "§" + ModConfig.mainColor.getChar() + (Text.translatable("text.player-visibility.message.on")).getString();
         }
-        sendMessage((VersionedText.translatable("text.player-visibility.message.visibility-toggle", ModConfig.mainColor.getChar(), VisibleString)));
+        sendMessage((Text.translatable("text.player-visibility.message.visibility-toggle", ModConfig.mainColor.getChar(), VisibleString)));
     }
 
     public static boolean isVisibilityEnabled() {
@@ -64,7 +67,7 @@ public class PlayerVisibility implements ClientModInitializer {
         try {
             if (info.isPlayer) {
                 if (ModConfig.hidePlayers) {
-                    boolean shouldHide = shouldHidePlayerByName(info.name.getString());
+                    boolean shouldHide = info.isSelf ? ModConfig.hideSelf : shouldHidePlayerByName(info.name.getString());
                     return new HideInfo(shouldHide, info.distance);
                 } else {
                     return visible;
@@ -84,100 +87,39 @@ public class PlayerVisibility implements ClientModInitializer {
     }
 
     public static EntityInfo getEntityInfo(Object entityOrState) {
-        Throwable e = null;
-        Throwable e2 = null;
-        Throwable e3 = null;
-
-        try { // read as PlayerEntityRenderState.class
-            Class<?> entityRenderState = Class.forName("net.minecraft.class_10017");
-            Class<?> playerEntityRenderState = Class.forName("net.minecraft.class_10055");
-
-            if (!playerEntityRenderState.isAssignableFrom(entityOrState.getClass())) {
-                throw new IllegalStateException(String.format("%s does not inherit %s", entityOrState.getClass().getSimpleName(), playerEntityRenderState.getSimpleName()));
-            }
-
-            Text name = Text.of((String) ClassUtils.firstFieldWithName(playerEntityRenderState, "field_53529").get(entityOrState));
-            Text displayName = Optional.ofNullable(ClassUtils.firstFieldWithName(playerEntityRenderState, "field_53525").get(entityOrState))
-                    .map(obj -> (Text) obj)
-                    .orElse(Text.of(""));
-            double squaredDistanceToCamera = (double) ClassUtils.firstFieldWithName(entityRenderState, "field_53332").get(entityOrState);
-
-            return new EntityInfo(name, displayName, squaredDistanceToCamera, entityOrState);
-        } catch (Throwable _e) {
-            e = _e;
-            try { // read as EntityRenderState.class
-                Class<?> entityRenderState = ClassUtils.forName("net.minecraft.class_10017");
-
-                if (!entityRenderState.isAssignableFrom(entityOrState.getClass())) {
-                    throw new IllegalStateException(String.format("%s does not inherit %s", entityOrState.getClass().getSimpleName(), entityRenderState.getSimpleName()));
-                }
-
-                Text name = VersionedText.of("");
-                Text displayName = VersionedText.of("");
-                double squaredDistanceToCamera = (double) ClassUtils.firstFieldWithName(entityRenderState, "field_53332").get(entityOrState);
-
-                return new EntityInfo(name, displayName, squaredDistanceToCamera, entityOrState);
-            } catch (Throwable _e2) {
-                e2 = _e2;
-                try { // read as Entity.class
-                    assert minecraftClient.cameraEntity != null;
-
-                    Entity entity = ((Entity) entityOrState);
-
-                    Text name = entity.getName();
-                    Text displayName = entity.getDisplayName();
-                    double squaredDistanceToCamera = minecraftClient.cameraEntity.squaredDistanceTo(entity);
-
-                    return new EntityInfo(name, displayName, squaredDistanceToCamera, entityOrState);
-                } catch (Throwable _e3) {
-                    e3 = _e3;
-                }
-            }
+        if (entityOrState instanceof PlayerEntityRenderState state) {
+            return new EntityInfo(Objects.requireNonNullElse(state.playerName, Text.empty()), state.squaredDistanceToCamera, mc.player != null && state.id == mc.player.getId(), entityOrState);
+        }
+        if (entityOrState instanceof EntityRenderState state) {
+            return new EntityInfo(Text.empty(), state.squaredDistanceToCamera, false, entityOrState);
+        }
+        if (entityOrState instanceof Entity state) {
+            return new EntityInfo(state.getName(), mc.getCameraEntity().squaredDistanceTo(state), state == mc.player, entityOrState);
         }
 
-        throw new IllegalStateException(String.format("PlayerVisibility could not decode entity or state '%s' on %s: \n\n%s\n\n%s\n\n%s", entityOrState.getClass().getName().replaceAll("\\.", "/"), Constants.getMinecraftVersion(), e, e2, e3));
+        throw new IllegalStateException(String.format("PlayerVisibility could not decode entity or state '%s' on %s", entityOrState.getClass().getName().replaceAll("\\.", "/"), Constants.getMinecraftVersion()));
     }
 
     private static boolean shouldHidePlayerByName(String name) {
-        if (name.equalsIgnoreCase(minecraftClient.getSession().getUsername())) {
-            return ModConfig.hideSelf;
-        }
-
         boolean isInFilterList = ArrayListUtil.containsLowercase(ModConfig.getFilter(), name);
         return ModConfig.filterType == FilterType.WHITELIST ? !isInFilterList : isInFilterList;
     }
 
-    public static void sendMessage(Object text) {
-        try {
-            if (Class.forName("net.minecraft.class_5250").isAssignableFrom(text.getClass())) { // MutableText
-                sendMessage(((Text) text).getString());
-                return;
-            }
-        } catch (Throwable ignored) {
-        }
-        if (text instanceof Text) {
-            sendMessage(((Text) text).getString());
-            return;
-        }
-        if (text instanceof String) {
-            sendMessage(text);
-            return;
-        }
-
-        LOGGER.info("SendMessage failed because {} isn't a supported type of message", text.getClass().getName().replaceAll("\\.", "/"));
+    public static void sendMessage(Text text) {
+        sendMessage(text.getString());
     }
 
     public static void sendMessage(String message) {
         LOGGER.info(message);
-        if (minecraftClient.player == null) {
+        if (mc.player == null) {
             return;
         }
 
         String messagePrefix = "§fᴘʟᴀʏᴇʀ ᴠɪsɪʙɪʟɪᴛʏ" + "§f" + " » ";
 
         switch (ModConfig.messageType) {
-            case CHAT_MESSAGE -> minecraftClient.player.sendMessage(Text.of(messagePrefix + message), false);
-            case ACTION_BAR -> minecraftClient.player.sendMessage(Text.of(message), true);
+            case CHAT_MESSAGE -> mc.player.sendMessage(Text.of(messagePrefix + message), false);
+            case ACTION_BAR -> mc.player.sendMessage(Text.of(message), true);
             case HIDDEN -> {//do nothing LOL why did I even write this if statement I'm so silly🥺🥺🥺
             }
         }
@@ -202,13 +144,13 @@ public class PlayerVisibility implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        minecraftClient = MinecraftClient.getInstance();
+        mc = MinecraftClient.getInstance();
 
         toggleFilter = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.player-visibility.toggle",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_V,
-                "category.player-visibility.main"
+                KeyBinding.Category.create(Identifier.of("player-visibility", "main"))
         ));
 
         switch (ConfigUtil.init()) {
