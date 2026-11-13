@@ -2,16 +2,19 @@
   "required": false,
   "minVersion": "0.8",
   "package": "win.transgirls.playervisibility.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_25",
   "plugin": "win.transgirls.crossfabric.multiversion.VersionedMixinPluginImpl",
   "mixins": [
   ],
   "client": [
-    "cape.CapeMixinv12111m12111",
-    "entity.LivingEntityRendererMixinv12111m12111",
-    "fire.FireMixinv12111m12111",
-    "hitbox.HitboxMixinv12111m12111",
-    "shadow.ShadowMixinv12111m12111"
+    "cape.CapeMixinv261m262",
+    "cape.CapeMixinv263",
+    "cape.SubmitModelMixinv263",
+    "entity.LivingEntityRendererMixinv261m262",
+    "entity.LivingEntityRendererMixinv263",
+    "fire.FireMixinv261",
+    "hitbox.HitboxMixinv261",
+    "shadow.ShadowMixinv261"
   ],
   "injectors": {
     "defaultRequire": 1

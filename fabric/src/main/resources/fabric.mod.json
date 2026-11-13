@@ -26,10 +26,10 @@
   ],
   "depends": {
     "fabricloader": ">=0.15.0",
-    "fabric": "*",
-    "minecraft": "1.21.11",
-    "java": ">=17"
+    "minecraft": ">=26.1",
+    "java": ">=21"
   },
+  "accessWidener": "playervisibility.aw",
   "suggests": {},
   "custom": {
     "modmenu": {

@@ -4,12 +4,11 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -25,7 +24,6 @@ import win.transgirls.playervisibility.util.ArrayListUtil;
 import win.transgirls.playervisibility.util.ConfigUtil;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.WeakHashMap;
 
 import static win.transgirls.playervisibility.PlayerVisibilityClient.LOGGER;
@@ -33,6 +31,7 @@ import static win.transgirls.playervisibility.PlayerVisibilityClient.LOGGER;
 public class PlayerVisibility implements ClientModInitializer {
     public static MinecraftClient mc;
     public static Map<Object, Integer> transparency = new WeakHashMap<>();
+    public static int modelTint = -1; // used by SubmitModelMixinv263, not the cleanest but very elegant
     private static boolean filterEnabled = true;
     private static KeyBinding toggleFilter;
 
@@ -86,7 +85,8 @@ public class PlayerVisibility implements ClientModInitializer {
 
     public static EntityInfo getEntityInfo(Object entityOrState) {
         if (entityOrState instanceof PlayerEntityRenderState state) {
-            return new EntityInfo(Objects.requireNonNullElse(state.playerName, Text.empty()), smoothSquaredDistance(state), mc.player != null && state.id == mc.player.getId(), entityOrState);
+            Entity player = mc.world == null ? null : mc.world.getEntityById(state.id);
+            return new EntityInfo(player == null ? Text.empty() : player.getName(), smoothSquaredDistance(state), mc.player != null && state.id == mc.player.getId(), entityOrState);
         }
         if (entityOrState instanceof EntityRenderState state) {
             return new EntityInfo(Text.empty(), smoothSquaredDistance(state), false, entityOrState);
@@ -99,7 +99,7 @@ public class PlayerVisibility implements ClientModInitializer {
     }
 
     private static double smoothSquaredDistance(EntityRenderState state) {
-        return mc.gameRenderer.getCamera().getCameraPos().squaredDistanceTo(state.x, state.y, state.z);
+        return mc.getEntityRenderDispatcher().camera.pos.squaredDistanceTo(state.x, state.y, state.z);
     }
 
     private static boolean shouldHidePlayerByName(String name) {
@@ -120,8 +120,8 @@ public class PlayerVisibility implements ClientModInitializer {
         String messagePrefix = "§fᴘʟᴀʏᴇʀ ᴠɪsɪʙɪʟɪᴛʏ" + "§f" + " » ";
 
         switch (ModConfig.messageType) {
-            case CHAT_MESSAGE -> mc.player.sendMessage(Text.of(messagePrefix + message), false);
-            case ACTION_BAR -> mc.player.sendMessage(Text.of(message), true);
+            case CHAT_MESSAGE -> mc.player.sendMessage(Text.of(messagePrefix + message));
+            case ACTION_BAR -> mc.player.sendOverlayMessage(Text.of(message));
             case HIDDEN -> {//do nothing LOL why did I even write this if statement I'm so silly🥺🥺🥺
             }
         }
@@ -148,9 +148,8 @@ public class PlayerVisibility implements ClientModInitializer {
     public void onInitializeClient() {
         mc = MinecraftClient.getInstance();
 
-        toggleFilter = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+        toggleFilter = KeyMappingHelper.registerKeyMapping(new KeyBinding(
                 "key.player-visibility.toggle",
-                InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_V,
                 KeyBinding.Category.create(Identifier.of("player-visibility", "main"))
         ));

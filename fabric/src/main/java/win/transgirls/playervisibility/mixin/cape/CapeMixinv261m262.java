@@ -18,8 +18,8 @@ import win.transgirls.playervisibility.PlayerVisibility;
 import win.transgirls.playervisibility.types.HideInfo;
 
 @Mixin(value = CapeFeatureRenderer.class, priority = 1001)
-@VersionedMixin({">=1.21.11", "<=1.21.11"})
-public class CapeMixinv12111m12111 {
+@VersionedMixin({">=26.1", "<=26.2"})
+public class CapeMixinv261m262 {
     @WrapOperation(method = "render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;ILnet/minecraft/client/render/entity/state/PlayerEntityRenderState;FF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/RenderLayer;IIILnet/minecraft/client/render/command/ModelCommandRenderer$CrumblingOverlayCommand;)V"))
     private <S> void fadeCape(OrderedRenderCommandQueue instance, Model<? super S> model, S modelState, MatrixStack matrices, RenderLayer layer, int light, int overlay, int outlineColor, ModelCommandRenderer.CrumblingOverlayCommand crumbling, Operation<Void> original, @Local(argsOnly = true) PlayerEntityRenderState state) {
         HideInfo info = PlayerVisibility.computeHideInfoForEntityOrState(state);

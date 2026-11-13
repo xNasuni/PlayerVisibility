@@ -7,35 +7,31 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRenderer;
+import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import win.transgirls.crossfabric.annotation.VersionedMixin;
-import win.transgirls.crossfabric.tools.ClassUtils;
 import win.transgirls.playervisibility.PlayerVisibility;
 import win.transgirls.playervisibility.config.ModConfig;
 import win.transgirls.playervisibility.types.HideInfo;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.util.List;
-
 @Mixin(value = LivingEntityRenderer.class, priority = 1001)
-@VersionedMixin({">=1.21.11", "<=1.21.11"})
-public abstract class LivingEntityRendererMixinv12111m12111 {
-    @Unique
-    private MethodHandles.Lookup lookup = MethodHandles.lookup();
+@VersionedMixin({">=26.1", "<=26.2"})
+public abstract class LivingEntityRendererMixinv261m262<T extends LivingEntity, S extends LivingEntityRenderState> extends EntityRenderer<T, S> {
+    protected LivingEntityRendererMixinv261m262(EntityRendererFactory.Context context) {
+        super(context);
+    }
 
     @Inject(method = "render(Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;Lnet/minecraft/client/render/state/CameraRenderState;)V", at = @At("HEAD"), cancellable = true)
     private void injectRender(@Coerce Object state, MatrixStack matrices, OrderedRenderCommandQueue renderQueue, CameraRenderState cameraState, CallbackInfo ci, @Share("state") LocalRef<Object> stateRef) throws Throwable {
@@ -46,9 +42,7 @@ public abstract class LivingEntityRendererMixinv12111m12111 {
             ci.cancel();
 
             if (!ModConfig.hideNametags) {
-                MethodHandle superRender = ClassUtils.unreflectFirstDeclaredMethodWithName(lookup, EntityRenderer.class, LivingEntityRenderer.class, List.of("method_3936"), EntityRenderState.class, MatrixStack.class, OrderedRenderCommandQueue.class, CameraRenderState.class);
-
-                superRender.invoke(this, state, matrices, renderQueue, cameraState);
+                super.render((S) state, matrices, renderQueue, cameraState);
             }
         }
     }

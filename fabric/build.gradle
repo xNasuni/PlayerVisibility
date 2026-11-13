@@ -19,6 +19,18 @@ repositories {
         name = 'sponge'
         url = 'https://repo.spongepowered.org/repository/maven-public/'
     }
+    exclusiveContent {
+        // Modern Yarn
+        forRepository {
+            maven {
+                name = 'RelativityMC Maven'
+                url = 'https://repo.codemc.io/repository/relativitymc/'
+            }
+        }
+        filter {
+            includeGroup 'org.relativitymc'
+        }
+    }
     maven {
         name = 'modrinth'
         url = 'https://api.modrinth.com/maven'
@@ -26,13 +38,9 @@ repositories {
     mavenCentral()
 }
 
-remapJar {
-    addNestedDependencies = true
-}
-
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    mappings "org.relativitymc:modern-yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
@@ -40,6 +48,16 @@ dependencies {
 
     implementation "org.spongepowered:mixin:0.8.5"
     implementation project(":common")
+}
+
+loom {
+    useIntermediateMappings = true
+    intermediaryUrl = 'https://repo.codemc.io/repository/relativitymc/org/relativitymc/intermediary/%1$s/intermediary-%1$s-v2.jar'
+    accessWidenerPath = file("src/main/resources/playervisibility.aw")
+}
+
+remapJar {
+    addNestedDependencies = true
 }
 
 jar {
@@ -57,7 +75,7 @@ processResources {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
