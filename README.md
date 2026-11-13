@@ -8,7 +8,7 @@ Hide players easily! PlayerVisibility is a fabric mod for Minecraft to hide othe
 
 | platform | link |
 | --- | --- |
-| <img src="https://modrinth.com/favicon.ico" width="24px" align="left"> Modrinth | [Download](https://modrinth.com/mod/player-visibility/versions/) |
+| <img src="https://cdn.jsdelivr.net/gh/selfhst/icons/png/modrinth.png" width="24px" align="left"> Modrinth | [Download](https://modrinth.com/mod/player-visibility/versions/) |
 | <img src="https://github.githubassets.com/favicons/favicon-dark.svg" width="24px" align="left"> GitHub | [Download](https://github.com/xNasuni/PlayerVisibility/releases/latest) |
 
 #### Help
