@@ -1,14 +1,20 @@
 package win.transgirls.playervisibility.mixin.entity;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
+import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Coerce;
@@ -27,7 +33,7 @@ import java.util.List;
 
 @Mixin(value = LivingEntityRenderer.class, priority = 1001)
 @VersionedMixin({">=1.21.11", "<=1.21.11"})
-public class LivingEntityRendererMixinv12111m12111 {
+public abstract class LivingEntityRendererMixinv12111m12111 {
     @Unique
     private MethodHandles.Lookup lookup = MethodHandles.lookup();
 
@@ -47,14 +53,20 @@ public class LivingEntityRendererMixinv12111m12111 {
         }
     }
 
-    @ModifyArg(
-            method = "render(Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;Lnet/minecraft/client/render/state/CameraRenderState;)V",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/RenderLayer;IIILnet/minecraft/client/texture/Sprite;ILnet/minecraft/client/render/command/ModelCommandRenderer$CrumblingOverlayCommand;)V"
-            ),
-            index = 6
-    )
+    @Shadow
+    public abstract Identifier getTexture(LivingEntityRenderState state);
+
+    @ModifyReturnValue(method = "getRenderLayer", at = @At("RETURN"))
+    private RenderLayer fadeableLayer(RenderLayer original, LivingEntityRenderState state, boolean showBody, boolean translucent, boolean showOutline) {
+        if (original == null || !showBody || translucent) {
+            return original;
+        }
+
+        HideInfo info = PlayerVisibility.computeHideInfoForEntityOrState(state);
+        return info.hide && info.alpha < 1.0f ? RenderLayers.entityTranslucent(getTexture(state)) : original;
+    }
+
+    @ModifyArg(method = "render(Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;Lnet/minecraft/client/render/state/CameraRenderState;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;submitModel(Lnet/minecraft/client/model/Model;Ljava/lang/Object;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/RenderLayer;IIILnet/minecraft/client/texture/Sprite;ILnet/minecraft/client/render/command/ModelCommandRenderer$CrumblingOverlayCommand;)V"), index = 6)
     private int injectAlpha(int color, @Share("state") LocalRef<Object> stateRef) {
         Object state = stateRef.get();
 
