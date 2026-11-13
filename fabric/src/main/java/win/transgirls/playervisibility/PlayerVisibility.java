@@ -80,24 +80,26 @@ public class PlayerVisibility implements ClientModInitializer {
                 return visible;
             }
         } catch (Throwable e) {
-            throw new IllegalStateException(String.format(
-                    "Player Visibility could not handle check on %s: \n%s",
-                    Constants.getMinecraftVersion(), e));
+            throw new IllegalStateException(String.format("Player Visibility could not handle check on %s: \n%s", Constants.getMinecraftVersion(), e));
         }
     }
 
     public static EntityInfo getEntityInfo(Object entityOrState) {
         if (entityOrState instanceof PlayerEntityRenderState state) {
-            return new EntityInfo(Objects.requireNonNullElse(state.playerName, Text.empty()), state.squaredDistanceToCamera, mc.player != null && state.id == mc.player.getId(), entityOrState);
+            return new EntityInfo(Objects.requireNonNullElse(state.playerName, Text.empty()), smoothSquaredDistance(state), mc.player != null && state.id == mc.player.getId(), entityOrState);
         }
         if (entityOrState instanceof EntityRenderState state) {
-            return new EntityInfo(Text.empty(), state.squaredDistanceToCamera, false, entityOrState);
+            return new EntityInfo(Text.empty(), smoothSquaredDistance(state), false, entityOrState);
         }
         if (entityOrState instanceof Entity state) {
             return new EntityInfo(state.getName(), mc.getCameraEntity().squaredDistanceTo(state), state == mc.player, entityOrState);
         }
 
         throw new IllegalStateException(String.format("PlayerVisibility could not decode entity or state '%s' on %s", entityOrState.getClass().getName().replaceAll("\\.", "/"), Constants.getMinecraftVersion()));
+    }
+
+    private static double smoothSquaredDistance(EntityRenderState state) {
+        return mc.gameRenderer.getCamera().getCameraPos().squaredDistanceTo(state.x, state.y, state.z);
     }
 
     private static boolean shouldHidePlayerByName(String name) {
