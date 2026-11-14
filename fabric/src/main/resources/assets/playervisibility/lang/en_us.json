@@ -1,6 +1,6 @@
 {
   "key.player-visibility.toggle": "Toggle Player Visibility",
-  "category.player-visibility.main": "Player Visibility",
+  "key.category.player-visibility.main": "Player Visibility",
   "text.player-visibility.message._unused_comment-for_contributors": "# you need to make sure that you use the same amount of the format replacements, these strings are dynamically modified to fit in with messages said to the user. (you can use the spanish translation I made as an example.)",
   "text.player-visibility.message.action-delimiter": "§%sPlayer Visibility§f will now %s!",
   "text.player-visibility.message.invalid-boolean": "§cThe boolean §f'%s'§c is not valid!",
